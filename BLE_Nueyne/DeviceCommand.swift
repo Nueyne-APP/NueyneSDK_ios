@@ -8,9 +8,9 @@
 
 import Foundation
 
-class DeviceCommand {
+open class DeviceCommand {
     static let shared = DeviceCommand()
-    private init(){}
+    public init(){}
     
     // Increase intensity command
     let increaseIntensityCmd: UInt16 = 0x0001
