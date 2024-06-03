@@ -9,7 +9,7 @@
 import Foundation
 
 open class DeviceCommand {
-    static let shared = DeviceCommand()
+    public static let shared = DeviceCommand()
     public init(){}
     
     // Increase intensity command

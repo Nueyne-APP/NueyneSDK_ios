@@ -9,10 +9,6 @@ import Foundation
 import CoreBluetooth
 
 
-open class BleTestManager {
-    var bleTestM = BLEManager()
-}
-
 enum DeviceInfoUUIDs: String, Codable, CaseIterable{
     case buildNumber = "E04B1734-C2E3-0001-0001-1A83C19C0D54"
     case internalProtocolVersion = "E04B1734-C2E3-0001-0002-1A83C19C0D54"
@@ -88,7 +84,6 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     
     // MARK: Function to initialize Bluetooth Manager
     func initBLE(){
-        
         centralManager = CBCentralManager(delegate: self, queue: nil)
         print("BLE Manager initialised")
     }
@@ -149,7 +144,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
             // Found our device, stop scanning
             centralManager.stopScan()
             centralManager.connect(peripheral,options: nil)
-            bleState = "Elixir device found, trying to connect with it"
+            bleState = "Elexir device found, trying to connect with it"
         }
     }
     

@@ -13,6 +13,7 @@
 		3C6C737D2C06CC8800060B8C /* DeviceCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6C73792C06CC8800060B8C /* DeviceCommand.swift */; };
 		3C6C737E2C06CC8800060B8C /* BLEEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6C737A2C06CC8800060B8C /* BLEEnums.swift */; };
 		3C6C73BB2C06FF6B00060B8C /* DeviceCommand_T.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6C73BA2C06FF6B00060B8C /* DeviceCommand_T.swift */; };
+		3C7726852C0D57FC002D332C /* BLEMangerProtocol_T.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7726842C0D57FC002D332C /* BLEMangerProtocol_T.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		3C6C737A2C06CC8800060B8C /* BLEEnums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEEnums.swift; sourceTree = "<group>"; };
 		3C6C73812C06E0DC00060B8C /* BLE_Nueyne.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = BLE_Nueyne.xcodeproj; sourceTree = "<group>"; };
 		3C6C73BA2C06FF6B00060B8C /* DeviceCommand_T.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCommand_T.swift; sourceTree = "<group>"; };
+		3C7726842C0D57FC002D332C /* BLEMangerProtocol_T.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEMangerProtocol_T.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				3C6C73BA2C06FF6B00060B8C /* DeviceCommand_T.swift */,
 				3C6C736F2C06CC6F00060B8C /* BLE_Nueyne.h */,
 				3C6C73702C06CC6F00060B8C /* BLE_Nueyne.docc */,
+				3C7726842C0D57FC002D332C /* BLEMangerProtocol_T.swift */,
 			);
 			path = BLE_Nueyne;
 			sourceTree = "<group>";
@@ -169,6 +172,7 @@
 				3C6C737D2C06CC8800060B8C /* DeviceCommand.swift in Sources */,
 				3C6C73712C06CC6F00060B8C /* BLE_Nueyne.docc in Sources */,
 				3C6C737C2C06CC8800060B8C /* BLEManager.swift in Sources */,
+				3C7726852C0D57FC002D332C /* BLEMangerProtocol_T.swift in Sources */,
 				3C6C73BB2C06FF6B00060B8C /* DeviceCommand_T.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
