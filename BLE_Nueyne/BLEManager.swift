@@ -9,7 +9,7 @@ import Foundation
 import CoreBluetooth
 
 
-enum DeviceInfoUUIDs: String, Codable, CaseIterable{
+private enum DeviceInfoUUIDs: String, Codable, CaseIterable{
     case buildNumber = "E04B1734-C2E3-0001-0001-1A83C19C0D54"
     case internalProtocolVersion = "E04B1734-C2E3-0001-0002-1A83C19C0D54"
     case revisionInformation = "E04B1734-C2E3-0001-0003-1A83C19C0D54"
@@ -63,7 +63,7 @@ private enum BLEServicesUUID: String, Codable, CaseIterable {
 
 class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeripheralDelegate {
     
-    func testFramework() {
+    open func testFramework() {
         print("This is BLEManager.from BLE_NUeyne Framework.")
     }
     
@@ -83,13 +83,13 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     private let masterModeControl: UInt8 = 0x03
     
     // MARK: Function to initialize Bluetooth Manager
-    func initBLE(){
+    public func initBLE(){
         centralManager = CBCentralManager(delegate: self, queue: nil)
         print("BLE Manager initialised")
     }
     
     // MARK: Function to stop searching
-    func stopScanning(){
+    public func stopScanning(){
         if centralManager.isScanning {
             centralManager.stopScan()
         }
