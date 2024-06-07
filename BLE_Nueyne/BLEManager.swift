@@ -9,7 +9,7 @@ import Foundation
 import CoreBluetooth
 
 
-private enum DeviceInfoUUIDs: String, Codable, CaseIterable{
+public enum DeviceInfoUUIDs: String, Codable, CaseIterable{
     case buildNumber = "E04B1734-C2E3-0001-0001-1A83C19C0D54"
     case internalProtocolVersion = "E04B1734-C2E3-0001-0002-1A83C19C0D54"
     case revisionInformation = "E04B1734-C2E3-0001-0003-1A83C19C0D54"
@@ -28,7 +28,7 @@ private enum DeviceInfoUUIDs: String, Codable, CaseIterable{
 }
 
 // Stimulation Data
-struct StimulationData {
+public struct StimulationData {
     var treatmentTime: UInt32  // Total treatment time in seconds
     var elapsedTime: UInt32    // Elapsed time in seconds
     var targetCurrent: UInt16  // Target current in microamperes
@@ -51,17 +51,17 @@ struct StimulationData {
         }
 }
 
-private enum CurrentStimulationUUIDs: String, Codable, CaseIterable {
+public enum CurrentStimulationUUIDs: String, Codable, CaseIterable {
     case deviceMonitoring = "E04B1734-C2E3-0002-0002-1A83C19C0D54"
     case controlRequest = "E04B1734-C2E3-0002-0001-1A83C19C0D54"
 }
 
-private enum BLEServicesUUID: String, Codable, CaseIterable {
+public enum BLEServicesUUID: String, Codable, CaseIterable {
     case deviceInformationServiceUUID = "E04B1734-C2E3-0001-0000-1A83C19C0D54"
     case currestStimulationServiceUUID = "E04B1734-C2E3-0002-0000-1A83C19C0D54"
 }
 
-class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeripheralDelegate {
+public class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeripheralDelegate {
     
     open func testFramework() {
         print("This is BLEManager.from BLE_NUeyne Framework.")
@@ -97,7 +97,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     
     
     // MARK: BLE Delegate Functions
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+    public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         print("BLE state updated")
         switch(central.state){
         case .poweredOn:
@@ -134,7 +134,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called, when a ble device is discovered
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         print("BLE discovered : \(String(describing: peripheral.name))")
         if peripheral.name == nil { return}
         if peripheral.name == modelName {
@@ -149,7 +149,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called when device is connected
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+    public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         if peripheral.name == modelName {
             self.peripheral?.discoverServices([CBUUID(string: BLEServicesUUID.deviceInformationServiceUUID.rawValue),CBUUID(string: BLEServicesUUID.currestStimulationServiceUUID.rawValue)])
 //            self.peripheral?.discoverServices([CBUUID(string: BLEServicesUUID.deviceInformationServiceUUID.rawValue)])
@@ -159,7 +159,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Just trying device information services for now, later on we need to do it for currentStimilation as well
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
         
         for service in services {
@@ -170,7 +170,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called when characteristic for service are found
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else { return }
         bleState = "Device Information characteristics discovered"
         for characteristic in characteristics {
@@ -187,7 +187,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called when device is disconnected
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         readyToSendCmd = false
         self.peripheral = nil
         deviceInfo = [:]
@@ -195,7 +195,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
         bleState = BLEConnectionState.disconnected.rawValue
     }
     
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: Error?) {
         if isReconnecting {
             // TODO:
         }else{
@@ -208,7 +208,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called when we receive a value for characteristic
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if let value = characteristic.value {
             // TODO: Decode value
             if characteristic.service?.uuid == CBUUID(string: BLEServicesUUID.deviceInformationServiceUUID.rawValue){
@@ -248,7 +248,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function to write command to device
-    func writeCommand(toCharacteristic characteristic: CBCharacteristic, onPeripheral peripheral: CBPeripheral, withData data: Data) {
+    private func writeCommand(toCharacteristic characteristic: CBCharacteristic, onPeripheral peripheral: CBPeripheral, withData data: Data) {
         // Check if the characteristic's properties include writing capability
         if characteristic.properties.contains(.write) {
             peripheral.writeValue(data, for: characteristic, type: .withResponse)

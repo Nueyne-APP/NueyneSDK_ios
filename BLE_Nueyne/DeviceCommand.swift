@@ -8,7 +8,7 @@
 
 import Foundation
 
-private class DeviceCommand {
+ public class DeviceCommand {
     public static let shared = DeviceCommand()
     public init(){}
     
