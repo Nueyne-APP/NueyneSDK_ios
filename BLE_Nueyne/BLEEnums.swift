@@ -23,7 +23,7 @@ public enum BLEStates: String , Codable, CaseIterable {
     case unauthorized = "Bluetooth is not authorised."
 }
 
-enum BLEConnectionState: String, Codable, CaseIterable {
+public enum BLEConnectionState: String, Codable, CaseIterable {
     case connected = "Device is connected"
     case disconnected = "Device got disconnected"
 }

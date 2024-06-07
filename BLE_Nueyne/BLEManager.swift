@@ -16,7 +16,7 @@ public enum DeviceInfoUUIDs: String, Codable, CaseIterable{
     case uniqueId = "E04B1734-C2E3-0001-0004-1A83C19C0D54"
     case deviceSettingInfo = "E04B1734-C2E3-0001-0005-1A83C19C0D54"
     
-    var  Property: String {
+public var  Property: String {
         switch self {
         case .buildNumber: return "Build Number"
         case .deviceSettingInfo: return "Device Setting Info"
@@ -29,13 +29,13 @@ public enum DeviceInfoUUIDs: String, Codable, CaseIterable{
 
 // Stimulation Data
 public struct StimulationData {
-    var treatmentTime: UInt32  // Total treatment time in seconds
-    var elapsedTime: UInt32    // Elapsed time in seconds
-    var targetCurrent: UInt16  // Target current in microamperes
-    var ongoingCurrentChannel1: UInt16  // Ongoing current from channel 1 in microamperes
-    var ongoingCurrentChannel2: UInt16  // Ongoing current from channel 2 in microamperes
-    var currentStimulationStep: UInt8   // Current stimulation step
-    var treatmentStatus: UInt8          // Device status
+    public var treatmentTime: UInt32  // Total treatment time in seconds
+    public var elapsedTime: UInt32    // Elapsed time in seconds
+    public var targetCurrent: UInt16  // Target current in microamperes
+    public var ongoingCurrentChannel1: UInt16  // Ongoing current from channel 1 in microamperes
+    public var ongoingCurrentChannel2: UInt16  // Ongoing current from channel 2 in microamperes
+    public var currentStimulationStep: UInt8   // Current stimulation step
+    public var treatmentStatus: UInt8          // Device status
     
     var description: String {
             return """
@@ -69,13 +69,13 @@ public class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CB
     
     public static let BLEManger = BLEManager()
     let modelName = "BB-60601"
-    @Published var centralManager: CBCentralManager! // Bluetooth manager
-    @Published var bleState:String = "Idle" // Bluetooth state
-    @Published var deviceInfo:[String:String] = [:] // Dictionary to hold device information
-    @Published var currentStimulationCharacters:[CBCharacteristic] = [] // Array to hold current stimulation characteristics, will be used to write characteristic later
-    @Published var readyToSendCmd:Bool = false
-    @Published var monitoringData: StimulationData? = nil
-    var peripheral: CBPeripheral? = nil // Peripheral/device instance, will be used to write characteristic
+    @Published public var centralManager: CBCentralManager! // Bluetooth manager
+    @Published public var bleState:String = "Idle" // Bluetooth state
+    @Published public var deviceInfo:[String:String] = [:] // Dictionary to hold device information
+    @Published public var currentStimulationCharacters:[CBCharacteristic] = [] // Array to hold current stimulation characteristics, will be used to write characteristic later
+    @Published private var readyToSendCmd:Bool = false
+    @Published public var monitoringData: StimulationData? = nil
+    public var peripheral: CBPeripheral? = nil // Peripheral/device instance, will be used to write characteristic
     
     // Private data
     private let masterIntensityControl: UInt8 = 0x00
@@ -94,6 +94,13 @@ public class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CB
             centralManager.stopScan()
         }
     }
+    
+        // MARK: Disconnect with elixir device
+    public func disconnectDevice(){
+            if peripheral != nil {
+                centralManager.cancelPeripheralConnection(peripheral!)
+            }
+        }
     
     
     // MARK: BLE Delegate Functions
@@ -308,29 +315,29 @@ extension BLEManager {
         }
     }
     
-    func decreaseIntensity(){
+    public func decreaseIntensity(){
         sendDeviceCommand(withCommand: [DeviceCommand.shared.decreaseIntensityCmd, DeviceCommand.shared.dummyByte],masterCommand: masterIntensityControl)
     }
     
-    func increaseIntensity(){
+    public func increaseIntensity(){
         sendDeviceCommand(withCommand: [DeviceCommand.shared.increaseIntensityCmd, DeviceCommand.shared.dummyByte],masterCommand: masterIntensityControl)
     }
     
-    func startDevice(mode: String){
+    public func startDevice(mode: String){
         setMode(command: mode == TreatmentTypeTxts.acuteMode.rawValue ? DeviceCommand.shared.treatmentMode1 : DeviceCommand.shared.treatmentMode2) // Setting mode
         sleep(1) // Wait for one second
         sendDeviceCommand(withCommand: [], andSingleByteCommand: DeviceCommand.shared.startDevice,masterCommand: masterOperatingControl) // Start device
     }
     
-    func shutdownDevice(){
+    public func shutdownDevice(){
         sendDeviceCommand(withCommand: [], andSingleByteCommand: DeviceCommand.shared.shutdownDevice,masterCommand: masterOperatingControl)
     }
     
-    func setIntensity(value:Int){
+    public func setIntensity(value:Int){
         sendDeviceCommand(withCommand: [DeviceCommand.shared.setIntensity,  UInt16(value)],masterCommand: masterIntensityControl)
     }
     
-    func setMode(command:UInt8){
+    public func setMode(command:UInt8){
         sendDeviceCommand(withCommand: [],andTwoByteCommand: [DeviceCommand.shared.treatmentPayload,command], masterCommand: masterModeControl)
     }
 }
