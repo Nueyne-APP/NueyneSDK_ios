@@ -29,13 +29,13 @@ public var  Property: String {
 
 // Stimulation Data
 public struct StimulationData {
-    public var treatmentTime: UInt32  // Total treatment time in seconds
-    public var elapsedTime: UInt32    // Elapsed time in seconds
-    public var targetCurrent: UInt16  // Target current in microamperes
-    public var ongoingCurrentChannel1: UInt16  // Ongoing current from channel 1 in microamperes
-    public var ongoingCurrentChannel2: UInt16  // Ongoing current from channel 2 in microamperes
-    public var currentStimulationStep: UInt8   // Current stimulation step
-    public var treatmentStatus: UInt8          // Device status
+    public private(set) var treatmentTime: UInt32  // Total treatment time in seconds
+    public private(set) var elapsedTime: UInt32    // Elapsed time in seconds
+    public private(set) var targetCurrent: UInt16  // Target current in microamperes
+    public private(set) var ongoingCurrentChannel1: UInt16  // Ongoing current from channel 1 in microamperes
+    public private(set) var ongoingCurrentChannel2: UInt16  // Ongoing current from channel 2 in microamperes
+    public private(set) var currentStimulationStep: UInt8   // Current stimulation step
+    public private(set) var treatmentStatus: UInt8          // Device status
     
     var description: String {
             return """
