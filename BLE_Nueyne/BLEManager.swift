@@ -9,18 +9,14 @@ import Foundation
 import CoreBluetooth
 
 
-open class BleTestManager {
-    var bleTestM = BLEManager()
-}
-
-enum DeviceInfoUUIDs: String, Codable, CaseIterable{
+public enum DeviceInfoUUIDs: String, Codable, CaseIterable{
     case buildNumber = "E04B1734-C2E3-0001-0001-1A83C19C0D54"
     case internalProtocolVersion = "E04B1734-C2E3-0001-0002-1A83C19C0D54"
     case revisionInformation = "E04B1734-C2E3-0001-0003-1A83C19C0D54"
     case uniqueId = "E04B1734-C2E3-0001-0004-1A83C19C0D54"
     case deviceSettingInfo = "E04B1734-C2E3-0001-0005-1A83C19C0D54"
     
-    var  Property: String {
+public var  Property: String {
         switch self {
         case .buildNumber: return "Build Number"
         case .deviceSettingInfo: return "Device Setting Info"
@@ -32,14 +28,14 @@ enum DeviceInfoUUIDs: String, Codable, CaseIterable{
 }
 
 // Stimulation Data
-struct StimulationData {
-    var treatmentTime: UInt32  // Total treatment time in seconds
-    var elapsedTime: UInt32    // Elapsed time in seconds
-    var targetCurrent: UInt16  // Target current in microamperes
-    var ongoingCurrentChannel1: UInt16  // Ongoing current from channel 1 in microamperes
-    var ongoingCurrentChannel2: UInt16  // Ongoing current from channel 2 in microamperes
-    var currentStimulationStep: UInt8   // Current stimulation step
-    var treatmentStatus: UInt8          // Device status
+public struct StimulationData {
+    public private(set) var treatmentTime: UInt32  // Total treatment time in seconds
+    public private(set) var elapsedTime: UInt32    // Elapsed time in seconds
+    public private(set) var targetCurrent: UInt16  // Target current in microamperes
+    public private(set) var ongoingCurrentChannel1: UInt16  // Ongoing current from channel 1 in microamperes
+    public private(set) var ongoingCurrentChannel2: UInt16  // Ongoing current from channel 2 in microamperes
+    public private(set) var currentStimulationStep: UInt8   // Current stimulation step
+    public private(set) var treatmentStatus: UInt8          // Device status
     
     var description: String {
             return """
@@ -55,31 +51,31 @@ struct StimulationData {
         }
 }
 
-private enum CurrentStimulationUUIDs: String, Codable, CaseIterable {
+public enum CurrentStimulationUUIDs: String, Codable, CaseIterable {
     case deviceMonitoring = "E04B1734-C2E3-0002-0002-1A83C19C0D54"
     case controlRequest = "E04B1734-C2E3-0002-0001-1A83C19C0D54"
 }
 
-private enum BLEServicesUUID: String, Codable, CaseIterable {
+public enum BLEServicesUUID: String, Codable, CaseIterable {
     case deviceInformationServiceUUID = "E04B1734-C2E3-0001-0000-1A83C19C0D54"
     case currestStimulationServiceUUID = "E04B1734-C2E3-0002-0000-1A83C19C0D54"
 }
 
-class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeripheralDelegate {
+public class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeripheralDelegate {
     
-    func testFramework() {
+    open func testFramework() {
         print("This is BLEManager.from BLE_NUeyne Framework.")
     }
     
     public static let BLEManger = BLEManager()
     let modelName = "BB-60601"
-    @Published var centralManager: CBCentralManager! // Bluetooth manager
-    @Published var bleState:String = "Idle" // Bluetooth state
-    @Published var deviceInfo:[String:String] = [:] // Dictionary to hold device information
-    @Published var currentStimulationCharacters:[CBCharacteristic] = [] // Array to hold current stimulation characteristics, will be used to write characteristic later
-    @Published var readyToSendCmd:Bool = false
-    @Published var monitoringData: StimulationData? = nil
-    var peripheral: CBPeripheral? = nil // Peripheral/device instance, will be used to write characteristic
+    @Published public var centralManager: CBCentralManager! // Bluetooth manager
+    @Published public var bleState:String = "Idle" // Bluetooth state
+    @Published public var deviceInfo:[String:String] = [:] // Dictionary to hold device information
+    @Published public var currentStimulationCharacters:[CBCharacteristic] = [] // Array to hold current stimulation characteristics, will be used to write characteristic later
+    @Published private var readyToSendCmd:Bool = false
+    @Published public var monitoringData: StimulationData? = nil
+    public var peripheral: CBPeripheral? = nil // Peripheral/device instance, will be used to write characteristic
     
     // Private data
     private let masterIntensityControl: UInt8 = 0x00
@@ -87,22 +83,28 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     private let masterModeControl: UInt8 = 0x03
     
     // MARK: Function to initialize Bluetooth Manager
-    func initBLE(){
-        
+    public func initBLE(){
         centralManager = CBCentralManager(delegate: self, queue: nil)
         print("BLE Manager initialised")
     }
     
     // MARK: Function to stop searching
-    func stopScanning(){
+    public func stopScanning(){
         if centralManager.isScanning {
             centralManager.stopScan()
         }
     }
     
+        // MARK: Disconnect with elixir device
+    public func disconnectDevice(){
+            if peripheral != nil {
+                centralManager.cancelPeripheralConnection(peripheral!)
+            }
+        }
+    
     
     // MARK: BLE Delegate Functions
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+    public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         print("BLE state updated")
         switch(central.state){
         case .poweredOn:
@@ -139,7 +141,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called, when a ble device is discovered
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         print("BLE discovered : \(String(describing: peripheral.name))")
         if peripheral.name == nil { return}
         if peripheral.name == modelName {
@@ -149,12 +151,12 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
             // Found our device, stop scanning
             centralManager.stopScan()
             centralManager.connect(peripheral,options: nil)
-            bleState = "Elixir device found, trying to connect with it"
+            bleState = "Elexir device found, trying to connect with it"
         }
     }
     
     // MARK: Function that will be called when device is connected
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+    public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         if peripheral.name == modelName {
             self.peripheral?.discoverServices([CBUUID(string: BLEServicesUUID.deviceInformationServiceUUID.rawValue),CBUUID(string: BLEServicesUUID.currestStimulationServiceUUID.rawValue)])
 //            self.peripheral?.discoverServices([CBUUID(string: BLEServicesUUID.deviceInformationServiceUUID.rawValue)])
@@ -164,7 +166,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Just trying device information services for now, later on we need to do it for currentStimilation as well
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
         
         for service in services {
@@ -175,7 +177,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called when characteristic for service are found
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else { return }
         bleState = "Device Information characteristics discovered"
         for characteristic in characteristics {
@@ -192,7 +194,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called when device is disconnected
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         readyToSendCmd = false
         self.peripheral = nil
         deviceInfo = [:]
@@ -200,7 +202,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
         bleState = BLEConnectionState.disconnected.rawValue
     }
     
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: Error?) {
         if isReconnecting {
             // TODO:
         }else{
@@ -213,7 +215,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function that will be called when we receive a value for characteristic
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if let value = characteristic.value {
             // TODO: Decode value
             if characteristic.service?.uuid == CBUUID(string: BLEServicesUUID.deviceInformationServiceUUID.rawValue){
@@ -253,7 +255,7 @@ class BLEManager: NSObject, ObservableObject, CBCentralManagerDelegate,CBPeriphe
     }
     
     // MARK: Function to write command to device
-    func writeCommand(toCharacteristic characteristic: CBCharacteristic, onPeripheral peripheral: CBPeripheral, withData data: Data) {
+    private func writeCommand(toCharacteristic characteristic: CBCharacteristic, onPeripheral peripheral: CBPeripheral, withData data: Data) {
         // Check if the characteristic's properties include writing capability
         if characteristic.properties.contains(.write) {
             peripheral.writeValue(data, for: characteristic, type: .withResponse)
@@ -313,29 +315,29 @@ extension BLEManager {
         }
     }
     
-    func decreaseIntensity(){
+    public func decreaseIntensity(){
         sendDeviceCommand(withCommand: [DeviceCommand.shared.decreaseIntensityCmd, DeviceCommand.shared.dummyByte],masterCommand: masterIntensityControl)
     }
     
-    func increaseIntensity(){
+    public func increaseIntensity(){
         sendDeviceCommand(withCommand: [DeviceCommand.shared.increaseIntensityCmd, DeviceCommand.shared.dummyByte],masterCommand: masterIntensityControl)
     }
     
-    func startDevice(mode: String){
+    public func startDevice(mode: String){
         setMode(command: mode == TreatmentTypeTxts.acuteMode.rawValue ? DeviceCommand.shared.treatmentMode1 : DeviceCommand.shared.treatmentMode2) // Setting mode
         sleep(1) // Wait for one second
         sendDeviceCommand(withCommand: [], andSingleByteCommand: DeviceCommand.shared.startDevice,masterCommand: masterOperatingControl) // Start device
     }
     
-    func shutdownDevice(){
+    public func shutdownDevice(){
         sendDeviceCommand(withCommand: [], andSingleByteCommand: DeviceCommand.shared.shutdownDevice,masterCommand: masterOperatingControl)
     }
     
-    func setIntensity(value:Int){
+    public func setIntensity(value:Int){
         sendDeviceCommand(withCommand: [DeviceCommand.shared.setIntensity,  UInt16(value)],masterCommand: masterIntensityControl)
     }
     
-    func setMode(command:UInt8){
+    public func setMode(command:UInt8){
         sendDeviceCommand(withCommand: [],andTwoByteCommand: [DeviceCommand.shared.treatmentPayload,command], masterCommand: masterModeControl)
     }
 }

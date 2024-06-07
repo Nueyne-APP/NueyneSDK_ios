@@ -14,7 +14,7 @@ public enum BLEError: Error {
     case unknown
 }
 
-enum BLEStates: String , Codable, CaseIterable {
+public enum BLEStates: String , Codable, CaseIterable {
     case poweredOn = "Bluetooth is on, searching for device."
     case poweredOff = "Bluetooth is off."
     case unknown = "Bluetooth state is unknown."
@@ -23,17 +23,17 @@ enum BLEStates: String , Codable, CaseIterable {
     case unauthorized = "Bluetooth is not authorised."
 }
 
-enum BLEConnectionState: String, Codable, CaseIterable {
+public enum BLEConnectionState: String, Codable, CaseIterable {
     case connected = "Device is connected"
     case disconnected = "Device got disconnected"
 }
 
-enum DeviceState: String, Codable, CaseIterable {
+public enum DeviceState: String, Codable, CaseIterable {
     case deviceInfoReceived
     case deviceSelected
 }
 
-enum TreatmentTypeTxts: String, Codable, CaseIterable {
+public enum TreatmentTypeTxts: String, Codable, CaseIterable {
     case acuteMode = "Acute Mode"
     case acuteSubtitle = "Strong Pain"
     case preventionMode = "Prevention Mode"
